@@ -1,0 +1,3 @@
+@echo off
+echo Ejecutando Bouncerino desde src...
+python src\\bouncerino.py
