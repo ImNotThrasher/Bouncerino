@@ -8,11 +8,11 @@ if /I "%1"=="/silent" set SILENT=1
 
 if !SILENT! EQU 0 (
     color 0A
-    echo Desinstalando Bouncerino...
+    echo Desinstalando bouncerino...
 )
 
 set "WINSYS=%WINDIR%\System32"
-set "APPDATA_DIR=%APPDATA%\Bouncerino"
+set "APPDATA_DIR=%APPDATA%\bouncerino"
 set "DEST_FILE=%WINSYS%\bouncerino.scr"
 set "LOG_FILE=%APPDATA_DIR%\uninstall_log.txt"
 
