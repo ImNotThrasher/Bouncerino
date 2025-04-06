@@ -8,11 +8,11 @@ if /I "%1"=="/silent" set SILENT=1
 
 if !SILENT! EQU 0 (
     color 0A
-    echo Instalando Bouncerino...
+    echo Instalando bouncerino...
 )
 
 set "WINSYS=%WINDIR%\System32"
-set "APPDATA_DIR=%APPDATA%\Bouncerino"
+set "APPDATA_DIR=%APPDATA%\bouncerino"
 set "SRC_FILE=dist\bouncerino.scr"
 set "DEST_FILE=%WINSYS%\bouncerino.scr"
 set "LOG_FILE=%APPDATA_DIR%\install_log.txt"
