@@ -33,8 +33,8 @@ def cargar_configuracion():
         "MAX_ELEMENTOS": "100",
         "ARCHIVO_IMAGEN": "image.png",
         "TIEMPO_ESPERA": "10",
-        "ROTACION_MINIS_ACTIVADA": "True",
-        "VELOCIDAD_MINIS_ROTACION": "3",
+        "ROTACION_CLONES_ACTIVADA": "True",
+        "VELOCIDAD_CLONES_ROTACION": "3",
         "COLOR_FONDO": "0, 0, 0",
         "ARCHIVO_FONDO": ""
     }
@@ -44,22 +44,45 @@ def cargar_configuracion():
         return valores_por_defecto
 
     config.read(archivo_config)
+
+    if "CONFIG" not in config:
+        print("⚠️ El archivo config.ini no contiene la sección [CONFIG]. Usando configuración por defecto.")
+        return valores_por_defecto
+
     return {key: config["CONFIG"].get(key, valores_por_defecto[key]) for key in valores_por_defecto}
 
 # Cargar configuración
 config = cargar_configuracion()
 
+# Función utilitaria para obtener valores con cast y limpieza
+def get_config(key, default=None, cast=str):
+    try:
+        raw_value = config.get(key, default)
+        cleaned = raw_value.partition(';')[0].strip()
+        return cast(cleaned)
+    except Exception:
+        print(f"⚠️ Error en config: {key}. Usando valor por defecto: {default}")
+        return default
+
 # Asignar valores desde configuración
-NOMBRE_SCREENSAVER = config["NOMBRE_SCREENSAVER"]
-ANCHO_BASE = int(config["ANCHO_BASE"])
-VELOCIDAD_REBOTE = int(config["VELOCIDAD_REBOTE"])
-MAX_ELEMENTOS = int(config["MAX_ELEMENTOS"])
-ARCHIVO_IMAGEN = config["ARCHIVO_IMAGEN"]
-TIEMPO_ESPERA = int(config["TIEMPO_ESPERA"])
-ROTACION_MINIS_ACTIVADA = config["ROTACION_MINIS_ACTIVADA"].lower() == "true"
-VELOCIDAD_MINIS_ROTACION = int(config["VELOCIDAD_MINIS_ROTACION"])
-COLOR_FONDO = tuple(map(int, config["COLOR_FONDO"].split(',')))
-ARCHIVO_FONDO = config["ARCHIVO_FONDO"]
+NOMBRE_SCREENSAVER = get_config("NOMBRE_SCREENSAVER", "Bouncerino")
+ANCHO_BASE = get_config("ANCHO_BASE", 400, int)
+VELOCIDAD_REBOTE = get_config("VELOCIDAD_REBOTE", 3, int)
+MAX_ELEMENTOS = get_config("MAX_ELEMENTOS", 100, int)
+ARCHIVO_IMAGEN = get_config("ARCHIVO_IMAGEN", "image.png")
+TIEMPO_ESPERA = get_config("TIEMPO_ESPERA", 10, int)
+ROTACION_CLONES_ACTIVADA = get_config("ROTACION_CLONES_ACTIVADA", "True").lower() in ("true", "1", "yes")
+VELOCIDAD_CLONES_ROTACION = get_config("VELOCIDAD_CLONES_ROTACION", 3, int)
+
+try:
+    COLOR_FONDO = tuple(map(int, get_config("COLOR_FONDO", "0, 0, 0").split(',')))
+    if len(COLOR_FONDO) != 3:
+        raise ValueError
+except:
+    print("⚠️ COLOR_FONDO inválido. Usando negro por defecto.")
+    COLOR_FONDO = (0, 0, 0)
+
+ARCHIVO_FONDO = get_config("ARCHIVO_FONDO", "")
 
 # Cargar fondo desde archivo si se especifica
 fondo_imagen = None
@@ -71,67 +94,60 @@ if ARCHIVO_FONDO and ruta_fondo:
 info_pantalla = pygame.display.Info()
 ANCHO, ALTO = info_pantalla.current_w, info_pantalla.current_h
 
-# Configurar pantalla completa
-pantalla = pygame.display.set_mode((ANCHO, ALTO), pygame.FULLSCREEN)
+# Soporte para modo ventana con "--ventana"
+MODO_TEST = "--ventana" in sys.argv
+pantalla = pygame.display.set_mode((800, 600) if MODO_TEST else (ANCHO, ALTO), pygame.FULLSCREEN if not MODO_TEST else 0)
 pygame.display.set_caption(NOMBRE_SCREENSAVER)
 
-# Función para cargar la imagen con soporte para PNG, JPG, etc.
+# Función para cargar imagen con fallback
 def cargar_imagen(archivo, tamano_base):
     ruta = buscar_archivo(archivo)
     if not ruta:
         print(f"⚠️ No se encontró la imagen: {archivo}. Usando imagen de reemplazo.")
         imagen = pygame.Surface((tamano_base, tamano_base), pygame.SRCALPHA)
-        imagen.fill((255, 0, 0))  # Rojo de error
+        imagen.fill((255, 0, 0))
         return imagen
     try:
         imagen = pygame.image.load(ruta).convert_alpha()
     except pygame.error:
         print(f"❌ Error al cargar la imagen: {ruta}. Usando imagen de reemplazo.")
         imagen = pygame.Surface((tamano_base, tamano_base), pygame.SRCALPHA)
-        imagen.fill((255, 0, 0))  # Rojo de error
+        imagen.fill((255, 0, 0))
         return imagen
 
     ancho_original, alto_original = imagen.get_size()
     escala = tamano_base / max(ancho_original, alto_original)
     return pygame.transform.scale(imagen, (int(ancho_original * escala), int(alto_original * escala)))
 
-# Cargar la imagen principal
+# Cargar imagen principal
 logo = cargar_imagen(ARCHIVO_IMAGEN, ANCHO_BASE)
 logo_rect = logo.get_rect()
-
-# Posición inicial aleatoria
 logo_rect.x = random.randint(0, ANCHO - logo_rect.width)
 logo_rect.y = random.randint(0, ALTO - logo_rect.height)
 
-# Velocidad de movimiento
+# Movimiento
 vel_x, vel_y = VELOCIDAD_REBOTE, VELOCIDAD_REBOTE
-
-# Lista de elementos pequenios
 elementos = []
 
-# Función para crear elementos pequenios con rotación
+# Crear clones
 def crear_elemento(x, y):
     tamano = random.randint(50, 150)
     imagen_pequenio = cargar_imagen(ARCHIVO_IMAGEN, tamano)
-    rect_pequenio = imagen_pequenio.get_rect()
-    rect_pequenio.x = x
-    rect_pequenio.y = y
-    vel_pequenio_x = random.choice([-1, 1]) * random.randint(1, 5)
-    vel_pequenio_y = random.choice([-1, 1]) * random.randint(1, 5)
+    rect = imagen_pequenio.get_rect(topleft=(x, y))
+    vel_x = random.choice([-1, 1]) * random.randint(1, 5)
+    vel_y = random.choice([-1, 1]) * random.randint(1, 5)
     angulo = 0
-    vel_rotacion = random.choice([-1, 1]) * VELOCIDAD_MINIS_ROTACION if ROTACION_MINIS_ACTIVADA else 0
-    return [imagen_pequenio, rect_pequenio, vel_pequenio_x, vel_pequenio_y, angulo, vel_rotacion]
+    rotacion = random.choice([-1, 1]) * VELOCIDAD_CLONES_ROTACION if ROTACION_CLONES_ACTIVADA else 0
+    return [imagen_pequenio, rect, vel_x, vel_y, angulo, rotacion]
 
-# Bucle principal
+# Loop principal
 ejecutando = True
 pygame.mouse.set_visible(False)
 posicion_mouse_inicial = pygame.mouse.get_pos()
+clock = pygame.time.Clock()
 
 while ejecutando:
-    if fondo_imagen:
-        pantalla.blit(fondo_imagen, (0, 0))
-    else:
-        pantalla.fill(COLOR_FONDO)
+    pantalla.blit(fondo_imagen, (0, 0)) if fondo_imagen else pantalla.fill(COLOR_FONDO)
 
     logo_rect.x += vel_x
     logo_rect.y += vel_y
@@ -139,39 +155,35 @@ while ejecutando:
     if logo_rect.left <= 0 or logo_rect.right >= ANCHO:
         vel_x = -vel_x
         if len(elementos) < MAX_ELEMENTOS:
-            elementos.append(crear_elemento(logo_rect.centerx, logo_rect.centery))
+            elementos.append(crear_elemento(*logo_rect.center))
     if logo_rect.top <= 0 or logo_rect.bottom >= ALTO:
         vel_y = -vel_y
         if len(elementos) < MAX_ELEMENTOS:
-            elementos.append(crear_elemento(logo_rect.centerx, logo_rect.centery))
+            elementos.append(crear_elemento(*logo_rect.center))
 
-    for elemento in elementos:
-        imagen, rect, vel_x, vel_y, angulo, vel_rotacion = elemento
-        rect.x += vel_x
-        rect.y += vel_y
-        angulo += vel_rotacion
+    for e in elementos:
+        imagen, rect, vx, vy, angulo, rotacion = e
+        rect.x += vx
+        rect.y += vy
+        angulo += rotacion
 
         if rect.left <= 0 or rect.right >= ANCHO:
-            elemento[2] = -vel_x
+            e[2] = -vx
         if rect.top <= 0 or rect.bottom >= ALTO:
-            elemento[3] = -vel_y
+            e[3] = -vy
 
         imagen_rotada = pygame.transform.rotate(imagen, angulo)
         nuevo_rect = imagen_rotada.get_rect(center=rect.center)
         pantalla.blit(imagen_rotada, nuevo_rect)
-        elemento[4] = angulo
+        e[4] = angulo
 
     pantalla.blit(logo, logo_rect)
     pygame.display.flip()
-    pygame.time.delay(TIEMPO_ESPERA)
+    clock.tick(1000 // TIEMPO_ESPERA)
 
     for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-            ejecutando = False
-        elif event.type == pygame.MOUSEMOTION:
-            if event.pos != posicion_mouse_inicial:
-                ejecutando = False
-        elif event.type == pygame.QUIT:
+        if event.type in (pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN, pygame.QUIT) or \
+           (event.type == pygame.MOUSEMOTION and event.pos != posicion_mouse_inicial):
             ejecutando = False
 
 pygame.quit()
