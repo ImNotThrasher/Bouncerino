@@ -1,14 +1,17 @@
 # 🎛️ bouncerino
 
-**bouncerino** es un screensaver (protector de pantalla) hecho en Python con Pygame que simula un logo rebotando por la pantalla. Cada vez que el logo rebota, genera pequeñas versiones que también se mueven y pueden rotar si se activa esa opción.
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
+![pygame](https://img.shields.io/badge/pygame-2.x-green)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+![Status](https://img.shields.io/badge/version-0.9.0-yellow)
 
-Este proyecto permite configuración flexible mediante un archivo `config.ini`, y puede ser ejecutado como `.py`, `.exe` o `.scr` (screensaver de Windows).
+**bouncerino** es un protector de pantalla escrito en Python con Pygame. Muestra un logo rebotando por la pantalla y genera pequeñas copias con rotación opcional cada vez que rebota. Es configurable, portátil y se puede ejecutar como `.py`, `.exe` o `.scr` en Windows.
 
 ---
 
-## 📦 Estructura del proyecto
+## 📁 Estructura del proyecto
 
-```plaintext
+```
 bouncerino/
 ├── src/
 │   ├── bouncerino.py         # Código principal del screensaver
@@ -19,34 +22,46 @@ bouncerino/
 ├── run.bat                   # Script para ejecutar el screensaver directamente
 ├── install.bat               # Instalador: copia archivos al sistema
 ├── uninstall.bat             # Desinstalador: borra archivos del sistema
+├── requirements.txt          # Dependencias de Python
+├── LICENSE                   # Licencia del proyecto (MIT)
 └── README.md                 # Documentación del proyecto
 ```
+
 ---
 
 ## 🧰 Requisitos
 
-Este proyecto incluye un archivo `requirements.txt` que facilita la instalación de dependencias:
+Este proyecto incluye un archivo [`requirements.txt`](./requirements.txt) que facilita la instalación de dependencias:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-
+Requiere:
 - Python 3.8 o superior
-- Pygame (`pip install pygame`)
-- PyInstaller (para empaquetar: `pip install pyinstaller`)
+- pygame
+- (opcional) pyinstaller para generar ejecutables
 
 ---
 
 ## ⚙️ Configuración (`config.ini`)
 
-📌 El archivo `config.ini` es **opcional**. Si no se encuentra, se usarán valores por defecto.
+📌 El archivo [`config.ini`](src/config.ini) es **opcional**. Si no se encuentra, se usan valores por defecto.
 
 ### 📍 Ubicaciones soportadas:
-- `%APPDATA%\\bouncerino\\config.ini`
-- Misma carpeta donde se encuentra el `.scr` o `.exe`
+- `%APPDATA%\bouncerino\config.ini`
+- Misma carpeta donde se encuentra el `.scr`, `.exe` o `.py`
 
-### 📄 Ejemplo de `config.ini`
+### 🔄 Prioridad de búsqueda de archivos
+
+Al ejecutarse, **bouncerino primero busca archivos en esta prioridad**:
+
+1. `%APPDATA%\bouncerino\` → si está instalado con `install.bat`.
+2. Carpeta local → donde esté el `.exe`, `.scr` o `.py`.
+
+Esto aplica tanto a [`config.ini`](src/config.ini), [`image.png`](src/image.png) como `ARCHIVO_FONDO`.
+
+### Ejemplo completo (`config.ini`):
 
 ```ini
 [CONFIG]
@@ -78,129 +93,94 @@ VELOCIDAD_CLONES_ROTACION = 3
 TIEMPO_ESPERA = 10
 ```
 
-### 🔍 Descripción de cada opción:
+---
 
-| Clave                     | Tipo    | Descripción                                                                 |
-|--------------------------|---------|-----------------------------------------------------------------------------|
-| `NOMBRE_SCREENSAVER`     | string  | Título de la ventana. También usado por el sistema si se instala como `.scr`. |
-| `ANCHO_BASE`             | int     | Tamaño base (en píxeles) del logo principal.                               |
-| `VELOCIDAD_REBOTE`       | int     | Velocidad del movimiento del logo principal.                               |
-| `MAX_ELEMENTOS`          | int     | Cantidad máxima de elementos pequeños generados tras rebotes.              |
-| `ARCHIVO_IMAGEN`         | string  | Nombre del archivo de imagen principal. Por defecto: `image.png`.          |
-| `TIEMPO_ESPERA`          | int     | Tiempo entre frames en milisegundos. Valores más bajos = animación fluida. |
-| `ROTACION_MINIS_ACTIVADA`| bool    | `True` para permitir que los elementos pequeños roten.                      |
-| `VELOCIDAD_MINIS_ROTACION` | int  | Velocidad de rotación de los elementos pequeños (si está activado).        |
-| `COLOR_FONDO`            | RGB     | Color de fondo en formato `"R, G, B"` (ejemplo: `0, 0, 0` para negro).      |
-| `ARCHIVO_FONDO`          | string  | Imagen de fondo. Si está vacío o no se encuentra, se usará `COLOR_FONDO`.  |
-
-## ▶️ Cómo correrlo en desarrollo
+## ▶️ Ejecución
 
 ### 🪟 Modo ventana (desarrollo)
-Podés ejecutar `bouncerino.py` con el argumento `--ventana` para que corra en modo **ventana**, en lugar de pantalla completa. Ideal para testeo:
+
+Podés ejecutar [`bouncerino.py`](src/bouncerino.py) con el argumento `--ventana` para que corra en modo **ventana**, en lugar de pantalla completa:
 
 ```bash
 python src/bouncerino.py --ventana
 ```
 
-### 🤫 Modo silent (scripts .bat)
-Los scripts `install.bat` y `uninstall.bat` aceptan el parámetro `-silent` o `/silent` para ejecutar sin mostrar mensajes ni pausar la consola.
+### 🐍 Ejecutar normalmente
 
 ```bash
-install.bat -silent
-uninstall.bat /silent
-```
-
-
-Si querés probar bouncerino directamente desde el código fuente:
-
-### 🐍 Usando Python directamente
-
-```bash
-cd bouncerino
 python src/bouncerino.py
 ```
 
-## 📄 Usando el script run.bat
-
-Si estás en Windows, podés ejecutar directamente:
+### 🖱️ O usar el script `run.bat`
 
 ```bash
 run.bat
 ```
-Este script ejecuta `src/bouncerino.py` sin necesidad de compilarlo, ideal para desarrollo o pruebas rápidas.
 
 ---
 
-## 🔨 Cómo compilar (generar `.scr` para Windows)
+## 🔨 Compilar como `.scr` (screensaver)
 
-Para generar el archivo `.scr` (protector de pantalla instalable en Windows), ejecutá:
+Usá el script `build.bat` para generar `bouncerino.scr` con PyInstaller:
+
+Esto:
+- Crea un `.exe` desde `src/bouncerino.py` usando PyInstaller
+- Lo renombra a `.scr`
+- Lo guarda en `dist/bouncerino.scr`
+
 
 ```bash
 build.bat
 ```
-Este script hace lo siguiente:
-
-- Usa **PyInstaller** para crear un archivo `.exe` a partir de `src/bouncerino.py`.
-- Lo renombra automáticamente como `bouncerino.scr`.
-- Lo deja en la carpeta `dist/`.
 
 ---
 
-## 📥 Instalación (modo screensaver de Windows)
+## 📥 Instalación como screensaver de Windows
 
-📌 Este screensaver está diseñado para funcionar en sistemas **Windows 7 o superior**. Las rutas del sistema (`%APPDATA%`, `%WINDIR%\\System32`) son específicas de Windows.
-
-Para instalar bouncerino como protector de  (Debe ejecutarse como administrador):
+Ejecutá:
 
 ```bash
 install.bat
 ```
-Este script:
 
-- Copia `bouncerino.scr` a `%WINDIR%\System32` (requerido por Windows para que aparezca en la lista de protectores de pantalla).
-- Crea una carpeta de recursos en `%APPDATA%\bouncerino\`.
-- Copia allí los archivos necesarios:
-  - [`config.ini`](src/config.ini)
-  - [`image.png`](src/image.png)
+Esto:
+- Copia `bouncerino.scr` a `%WINDIR%\System32` (ubicación obligatoria para protectores de pantalla en Windows)
+- Copia `config.ini` e `image.png` a `%APPDATA%\bouncerino` (carpeta de recursos y configuración)
 
-> 🧠 Si el programa no encuentra estos archivos en `%APPDATA%`, intentará cargarlos desde la misma carpeta donde se encuentra el `.scr` o `.exe`.
+### 🤫 Modo silencioso
+
+Los scripts `install.bat` y `uninstall.bat` aceptan `-silent` o `/silent` para ocultar mensajes:
+
+```bash
+install.bat -silent
+```
 
 ---
 
 ## ❌ Desinstalación
 
-Para desinstalar completamente bouncerino (Debe ejecutarse como administrador):
-
 ```bash
 uninstall.bat
 ```
-Este script:
 
-- Elimina `bouncerino.scr` del directorio `System32`.
-- Borra completamente la carpeta de configuración `%APPDATA%\bouncerino`, incluyendo:
-  - `config.ini`
-  - `image.png` u otros recursos personalizados
-
-> ✅ El desinstalador es seguro: no borra nada fuera de las rutas usadas por la instalación.
+Elimina el `.scr` de System32 y los recursos de `%APPDATA%\bouncerino`.
 
 ---
 
-## 🧠 Comportamiento
+## 🧠 Comportamiento del programa
 
-- El screensaver se cierra automáticamente si:
-  - Se presiona cualquier tecla
-  - Se hace clic con el mouse
-  - Se detecta movimiento del mouse
+- Se cierra si:
+  - Tocás una tecla
+  - Clickeás el mouse
+  - Movés el mouse
 
-- Si `config.ini` o `image.png` no se encuentran:
-  - Se usan **valores por defecto**
-  - Y una **imagen roja de reemplazo**
-
-- Se puede personalizar:
-  - El fondo de pantalla: color (`COLOR_FONDO`) o imagen (`ARCHIVO_FONDO`)
-  - El comportamiento de rotación de los elementos secundarios
-
-📌 Si no se encuentra el archivo especificado en `ARCHIVO_IMAGEN`, se mostrará una imagen de reemplazo: un cuadrado rojo del tamaño especificado, para indicar que la imagen original no está disponible.
+- Si no se encuentran los archivos de imagen/config:
+  - Usa valores por defecto
+  - Muestra una imagen roja de reemplazo
 
 ---
 
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT.  
+Ver el archivo [`LICENSE`](./LICENSE) para más información.
