@@ -176,3 +176,6 @@ cython_debug/
 # VSCode
 .vscode/
 *.swp
+
+# Bouncerino
+temp_log.txt
