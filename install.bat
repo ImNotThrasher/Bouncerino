@@ -1,21 +1,50 @@
 @echo off
-setlocal
+setlocal EnableDelayedExpansion
 
-echo Instalando Bouncerino...
+:: Detectar modo silent
+set SILENT=0
+if /I "%1"=="-silent" set SILENT=1
+if /I "%1"=="/silent" set SILENT=1
 
-set "WINSYS=%WINDIR%\\System32"
-set "APPDATA_DIR=%APPDATA%\\Bouncerino"
+if !SILENT! EQU 0 (
+    color 0A
+    echo Instalando Bouncerino...
+)
 
-:: Crear carpeta de recursos
+set "WINSYS=%WINDIR%\System32"
+set "APPDATA_DIR=%APPDATA%\Bouncerino"
+set "SRC_FILE=dist\bouncerino.scr"
+set "DEST_FILE=%WINSYS%\bouncerino.scr"
+set "LOG_FILE=%APPDATA_DIR%\install_log.txt"
+
 if not exist "%APPDATA_DIR%" (
     mkdir "%APPDATA_DIR%"
 )
 
-:: Copiar archivos
-copy /Y "dist\\bouncerino.scr" "%WINSYS%\\bouncerino.scr"
-copy /Y "src\\config.ini" "%APPDATA_DIR%\\config.ini"
-copy /Y "src\\image.png" "%APPDATA_DIR%\\image.png"
+if exist "%SRC_FILE%" (
+    copy /Y "%SRC_FILE%" "%DEST_FILE%" >nul
+    if !SILENT! EQU 0 echo ✅ Screensaver instalado en: %DEST_FILE%
 
-echo Instalación completada.
-pause
+    if exist "src\config.ini" (
+        copy /Y "src\config.ini" "%APPDATA_DIR%\config.ini"
+    ) else (
+        if !SILENT! EQU 0 echo ⚠️ No se encontró src\config.ini
+        echo [%DATE% %TIME%] config.ini no encontrado >> "%LOG_FILE%"
+    )
+
+    if exist "src\image.png" (
+        copy /Y "src\image.png" "%APPDATA_DIR%\image.png"
+    ) else (
+        if !SILENT! EQU 0 echo ⚠️ No se encontró src\image.png
+        echo [%DATE% %TIME%] image.png no encontrado >> "%LOG_FILE%"
+    )
+
+    if !SILENT! EQU 0 echo Instalación completada.
+) else (
+    color 0C
+    echo ❌ No se pudo instalar: no se encontró %SRC_FILE%
+    echo [%DATE% %TIME%] ERROR: bouncerino.scr no encontrado >> "%LOG_FILE%"
+)
+
+if !SILENT! EQU 0 pause
 endlocal
