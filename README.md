@@ -1,11 +1,11 @@
-# 🎛️ bouncerino
+# 🎛️ Bouncerino
 
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![pygame](https://img.shields.io/badge/pygame-2.x-green)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 ![Status](https://img.shields.io/badge/version-0.9.0-yellow)
 
-**bouncerino** es un protector de pantalla escrito en Python con Pygame. Muestra un logo rebotando por la pantalla y genera pequeñas copias con rotación opcional cada vez que rebota. Es configurable, portátil y se puede ejecutar como `.py`, `.exe` o `.scr` en Windows.
+**Bouncerino** es un protector de pantalla escrito en Python con Pygame. Muestra un logo rebotando por la pantalla y genera pequeñas copias con rotación opcional cada vez que rebota. Es configurable, portátil y se puede ejecutar como `.py`, `.exe` o `.scr` en Windows.
 
 ---
 
@@ -54,7 +54,7 @@ Requiere:
 
 ### 🔄 Prioridad de búsqueda de archivos
 
-Al ejecutarse, **bouncerino primero busca archivos en esta prioridad**:
+Al ejecutarse, **Bouncerino primero busca archivos en esta prioridad**:
 
 1. `%APPDATA%\bouncerino\` → si está instalado con `install.bat`.
 2. Carpeta local → donde esté el `.exe`, `.scr` o `.py`.

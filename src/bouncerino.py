@@ -65,7 +65,7 @@ def get_config(key, default=None, cast=str):
         return default
 
 # Asignar valores desde configuración
-NOMBRE_SCREENSAVER = get_config("NOMBRE_SCREENSAVER", "bouncerino")
+NOMBRE_SCREENSAVER = get_config("NOMBRE_SCREENSAVER", "Bouncerino")
 ANCHO_BASE = get_config("ANCHO_BASE", 400, int)
 VELOCIDAD_REBOTE = get_config("VELOCIDAD_REBOTE", 3, int)
 MAX_ELEMENTOS = get_config("MAX_ELEMENTOS", 100, int)

@@ -1,4 +1,4 @@
-# 📦 CHANGELOG – bouncerino
+# 📦 CHANGELOG – Bouncerino
 
 Este archivo documenta los cambios realizados en cada versión de **bouncerino**.
 
