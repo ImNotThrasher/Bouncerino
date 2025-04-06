@@ -49,14 +49,14 @@ Requiere:
 📌 El archivo [`config.ini`](src/config.ini) es **opcional**. Si no se encuentra, se usan valores por defecto.
 
 ### 📍 Ubicaciones soportadas:
-- `%APPDATA%\bouncerino\config.ini`
+- `%APPDATA%\Bouncerino\config.ini`
 - Misma carpeta donde se encuentra el `.scr`, `.exe` o `.py`
 
 ### 🔄 Prioridad de búsqueda de archivos
 
 Al ejecutarse, **Bouncerino primero busca archivos en esta prioridad**:
 
-1. `%APPDATA%\bouncerino\` → si está instalado con `install.bat`.
+1. `%APPDATA%\Bouncerino\` → si está instalado con `install.bat`.
 2. Carpeta local → donde esté el `.exe`, `.scr` o `.py`.
 
 Esto aplica tanto a [`config.ini`](src/config.ini), [`image.png`](src/image.png) como `ARCHIVO_FONDO`.
@@ -121,12 +121,12 @@ run.bat
 
 ## 🔨 Compilar como `.scr` (screensaver)
 
-Usá el script `build.bat` para generar `bouncerino.scr` con PyInstaller:
+Usá el script `build.bat` para generar `Bouncerino.scr` con PyInstaller:
 
 Esto:
 - Crea un `.exe` desde `src/bouncerino.py` usando PyInstaller
 - Lo renombra a `.scr`
-- Lo guarda en `dist/bouncerino.scr`
+- Lo guarda en `dist/Bouncerino.scr`
 
 
 ```bash
@@ -144,8 +144,8 @@ install.bat
 ```
 
 Esto:
-- Copia `bouncerino.scr` a `%WINDIR%\System32` (ubicación obligatoria para protectores de pantalla en Windows)
-- Copia `config.ini` e `image.png` a `%APPDATA%\bouncerino` (carpeta de recursos y configuración)
+- Copia `Bouncerino.scr` a `%WINDIR%\System32` (ubicación obligatoria para protectores de pantalla en Windows)
+- Copia `config.ini` e `image.png` a `%APPDATA%\Bouncerino` (carpeta de recursos y configuración)
 
 ### 🤫 Modo silencioso
 
@@ -163,7 +163,7 @@ install.bat -silent
 uninstall.bat
 ```
 
-Elimina el `.scr` de System32 y los recursos de `%APPDATA%\bouncerino`.
+Elimina el `.scr` de System32 y los recursos de `%APPDATA%\Bouncerino`.
 
 ---
 
