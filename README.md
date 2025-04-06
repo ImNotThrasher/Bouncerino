@@ -1,6 +1,6 @@
-# 🎛️ Bouncerino
+# 🎛️ bouncerino
 
-**Bouncerino** es un screensaver (protector de pantalla) hecho en Python con Pygame que simula un logo rebotando por la pantalla. Cada vez que el logo rebota, genera pequeñas versiones que también se mueven y pueden rotar si se activa esa opción.
+**bouncerino** es un screensaver (protector de pantalla) hecho en Python con Pygame que simula un logo rebotando por la pantalla. Cada vez que el logo rebota, genera pequeñas versiones que también se mueven y pueden rotar si se activa esa opción.
 
 Este proyecto permite configuración flexible mediante un archivo `config.ini`, y puede ser ejecutado como `.py`, `.exe` o `.scr` (screensaver de Windows).
 
@@ -25,6 +25,13 @@ bouncerino/
 
 ## 🧰 Requisitos
 
+Este proyecto incluye un archivo `requirements.txt` que facilita la instalación de dependencias:
+
+```bash
+pip install -r requirements.txt
+```
+
+
 - Python 3.8 o superior
 - Pygame (`pip install pygame`)
 - PyInstaller (para empaquetar: `pip install pyinstaller`)
@@ -36,23 +43,39 @@ bouncerino/
 📌 El archivo `config.ini` es **opcional**. Si no se encuentra, se usarán valores por defecto.
 
 ### 📍 Ubicaciones soportadas:
-- `%APPDATA%\\Bouncerino\\config.ini`
+- `%APPDATA%\\bouncerino\\config.ini`
 - Misma carpeta donde se encuentra el `.scr` o `.exe`
 
 ### 📄 Ejemplo de `config.ini`
 
 ```ini
 [CONFIG]
+
+; -------------------
+; Pantalla y fondo
+; -------------------
 NOMBRE_SCREENSAVER = Bouncerino
-ANCHO_BASE = 400
-VELOCIDAD_REBOTE = 3
-MAX_ELEMENTOS = 100
-ARCHIVO_IMAGEN = image.png
-TIEMPO_ESPERA = 10
-ROTACION_MINIS_ACTIVADA = True
-VELOCIDAD_MINIS_ROTACION = 3
 COLOR_FONDO = 0, 0, 0
 ARCHIVO_FONDO =
+
+; -------------------
+; Imagen principal
+; -------------------
+ARCHIVO_IMAGEN = image.png
+ANCHO_BASE = 400
+VELOCIDAD_REBOTE = 3
+
+; -------------------
+; Clones pequeños
+; -------------------
+MAX_ELEMENTOS = 100
+ROTACION_CLONES_ACTIVADA = True
+VELOCIDAD_CLONES_ROTACION = 3
+
+; -------------------
+; Rendimiento
+; -------------------
+TIEMPO_ESPERA = 10
 ```
 
 ### 🔍 Descripción de cada opción:
@@ -72,7 +95,23 @@ ARCHIVO_FONDO =
 
 ## ▶️ Cómo correrlo en desarrollo
 
-Si querés probar Bouncerino directamente desde el código fuente:
+### 🪟 Modo ventana (desarrollo)
+Podés ejecutar `bouncerino.py` con el argumento `--ventana` para que corra en modo **ventana**, en lugar de pantalla completa. Ideal para testeo:
+
+```bash
+python src/bouncerino.py --ventana
+```
+
+### 🤫 Modo silent (scripts .bat)
+Los scripts `install.bat` y `uninstall.bat` aceptan el parámetro `-silent` o `/silent` para ejecutar sin mostrar mensajes ni pausar la consola.
+
+```bash
+install.bat -silent
+uninstall.bat /silent
+```
+
+
+Si querés probar bouncerino directamente desde el código fuente:
 
 ### 🐍 Usando Python directamente
 
@@ -111,7 +150,7 @@ Este script hace lo siguiente:
 
 📌 Este screensaver está diseñado para funcionar en sistemas **Windows 7 o superior**. Las rutas del sistema (`%APPDATA%`, `%WINDIR%\\System32`) son específicas de Windows.
 
-Para instalar Bouncerino como protector de  (Debe ejecutarse como administrador):
+Para instalar bouncerino como protector de  (Debe ejecutarse como administrador):
 
 ```bash
 install.bat
@@ -119,7 +158,7 @@ install.bat
 Este script:
 
 - Copia `bouncerino.scr` a `%WINDIR%\System32` (requerido por Windows para que aparezca en la lista de protectores de pantalla).
-- Crea una carpeta de recursos en `%APPDATA%\Bouncerino\`.
+- Crea una carpeta de recursos en `%APPDATA%\bouncerino\`.
 - Copia allí los archivos necesarios:
   - [`config.ini`](src/config.ini)
   - [`image.png`](src/image.png)
@@ -130,7 +169,7 @@ Este script:
 
 ## ❌ Desinstalación
 
-Para desinstalar completamente Bouncerino (Debe ejecutarse como administrador):
+Para desinstalar completamente bouncerino (Debe ejecutarse como administrador):
 
 ```bash
 uninstall.bat
@@ -138,7 +177,7 @@ uninstall.bat
 Este script:
 
 - Elimina `bouncerino.scr` del directorio `System32`.
-- Borra completamente la carpeta de configuración `%APPDATA%\Bouncerino`, incluyendo:
+- Borra completamente la carpeta de configuración `%APPDATA%\bouncerino`, incluyendo:
   - `config.ini`
   - `image.png` u otros recursos personalizados
 
@@ -164,6 +203,4 @@ Este script:
 📌 Si no se encuentra el archivo especificado en `ARCHIVO_IMAGEN`, se mostrará una imagen de reemplazo: un cuadrado rojo del tamaño especificado, para indicar que la imagen original no está disponible.
 
 ---
-
-
 
