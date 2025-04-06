@@ -8,7 +8,7 @@ import sys
 pygame.init()
 
 # Ruta base de datos de recursos
-APPDATA_PATH = os.path.join(os.getenv("APPDATA"), "Bouncerino")
+APPDATA_PATH = os.path.join(os.getenv("APPDATA"), "bouncerino")
 LOCAL_PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 # Función para buscar archivo con prioridad: APPDATA > misma carpeta
@@ -27,7 +27,7 @@ def cargar_configuracion():
     archivo_config = buscar_archivo("config.ini")
 
     valores_por_defecto = {
-        "NOMBRE_SCREENSAVER": "Bouncerino",
+        "NOMBRE_SCREENSAVER": "bouncerino",
         "ANCHO_BASE": "400",
         "VELOCIDAD_REBOTE": "3",
         "MAX_ELEMENTOS": "100",
@@ -65,7 +65,7 @@ def get_config(key, default=None, cast=str):
         return default
 
 # Asignar valores desde configuración
-NOMBRE_SCREENSAVER = get_config("NOMBRE_SCREENSAVER", "Bouncerino")
+NOMBRE_SCREENSAVER = get_config("NOMBRE_SCREENSAVER", "bouncerino")
 ANCHO_BASE = get_config("ANCHO_BASE", 400, int)
 VELOCIDAD_REBOTE = get_config("VELOCIDAD_REBOTE", 3, int)
 MAX_ELEMENTOS = get_config("MAX_ELEMENTOS", 100, int)
@@ -78,7 +78,7 @@ try:
     COLOR_FONDO = tuple(map(int, get_config("COLOR_FONDO", "0, 0, 0").split(',')))
     if len(COLOR_FONDO) != 3:
         raise ValueError
-except:
+except ValueError:
     print("⚠️ COLOR_FONDO inválido. Usando negro por defecto.")
     COLOR_FONDO = (0, 0, 0)
 
