@@ -19,9 +19,9 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo Ejecutando Bouncerino desde src...
+echo Ejecutando bouncerino desde src...
 echo ------------------------------
-python src\\Bouncerino.py
+python src\\bouncerino.py
 echo ------------------------------
 pause
 endlocal
