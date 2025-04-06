@@ -4,11 +4,24 @@ import os
 import configparser
 import sys
 
+VALORES_POR_DEFECTO = {
+    "NOMBRE_SCREENSAVER": "Bouncerino",
+    "ANCHO_BASE": "400",
+    "VELOCIDAD_REBOTE": "3",
+    "MAX_ELEMENTOS": "100",
+    "ARCHIVO_IMAGEN": "image.png",
+    "TIEMPO_ESPERA": "10",
+    "ROTACION_CLONES_ACTIVADA": "True",
+    "VELOCIDAD_CLONES_ROTACION": "3",
+    "COLOR_FONDO": "0, 0, 0",
+    "ARCHIVO_FONDO": ""
+}
+
 # Inicializar Pygame
 pygame.init()
 
 # Ruta base de datos de recursos
-APPDATA_PATH = os.path.join(os.getenv("APPDATA"), "bouncerino")
+APPDATA_PATH = os.path.join(os.getenv("APPDATA"), "Bouncerino")
 LOCAL_PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 # Función para buscar archivo con prioridad: APPDATA > misma carpeta
@@ -26,18 +39,7 @@ def cargar_configuracion():
     config = configparser.ConfigParser()
     archivo_config = buscar_archivo("config.ini")
 
-    valores_por_defecto = {
-        "NOMBRE_SCREENSAVER": "bouncerino",
-        "ANCHO_BASE": "400",
-        "VELOCIDAD_REBOTE": "3",
-        "MAX_ELEMENTOS": "100",
-        "ARCHIVO_IMAGEN": "image.png",
-        "TIEMPO_ESPERA": "10",
-        "ROTACION_CLONES_ACTIVADA": "True",
-        "VELOCIDAD_CLONES_ROTACION": "3",
-        "COLOR_FONDO": "0, 0, 0",
-        "ARCHIVO_FONDO": ""
-    }
+    valores_por_defecto = VALORES_POR_DEFECTO
 
     if not archivo_config:
         print("⚠️ No se encontró config.ini. Usando configuración por defecto.")
@@ -55,34 +57,35 @@ def cargar_configuracion():
 config = cargar_configuracion()
 
 # Función utilitaria para obtener valores con cast y limpieza
-def get_config(key, default=None, cast=str):
+def get_config(key, cast=str):
+    default = VALORES_POR_DEFECTO[key]
     try:
         raw_value = config.get(key, default)
         cleaned = raw_value.partition(';')[0].strip()
         return cast(cleaned)
     except Exception:
         print(f"⚠️ Error en config: {key}. Usando valor por defecto: {default}")
-        return default
+        return cast(default)
 
 # Asignar valores desde configuración
-NOMBRE_SCREENSAVER = get_config("NOMBRE_SCREENSAVER", "Bouncerino")
-ANCHO_BASE = get_config("ANCHO_BASE", 400, int)
-VELOCIDAD_REBOTE = get_config("VELOCIDAD_REBOTE", 3, int)
-MAX_ELEMENTOS = get_config("MAX_ELEMENTOS", 100, int)
-ARCHIVO_IMAGEN = get_config("ARCHIVO_IMAGEN", "image.png")
-TIEMPO_ESPERA = get_config("TIEMPO_ESPERA", 10, int)
-ROTACION_CLONES_ACTIVADA = get_config("ROTACION_CLONES_ACTIVADA", "True").lower() in ("true", "1", "yes")
-VELOCIDAD_CLONES_ROTACION = get_config("VELOCIDAD_CLONES_ROTACION", 3, int)
+NOMBRE_SCREENSAVER = get_config("NOMBRE_SCREENSAVER")
+ANCHO_BASE = get_config("ANCHO_BASE", int)
+VELOCIDAD_REBOTE = get_config("VELOCIDAD_REBOTE", int)
+MAX_ELEMENTOS = get_config("MAX_ELEMENTOS", int)
+ARCHIVO_IMAGEN = get_config("ARCHIVO_IMAGEN")
+TIEMPO_ESPERA = get_config("TIEMPO_ESPERA", int)
+ROTACION_CLONES_ACTIVADA = get_config("ROTACION_CLONES_ACTIVADA").lower() in ("true", "1", "yes")
+VELOCIDAD_CLONES_ROTACION = get_config("VELOCIDAD_CLONES_ROTACION", int)
 
 try:
-    COLOR_FONDO = tuple(map(int, get_config("COLOR_FONDO", "0, 0, 0").split(',')))
+    COLOR_FONDO = tuple(map(int, get_config("COLOR_FONDO").split(',')))
     if len(COLOR_FONDO) != 3:
         raise ValueError
 except ValueError:
     print("⚠️ COLOR_FONDO inválido. Usando negro por defecto.")
     COLOR_FONDO = (0, 0, 0)
 
-ARCHIVO_FONDO = get_config("ARCHIVO_FONDO", "")
+ARCHIVO_FONDO = get_config("ARCHIVO_FONDO")
 
 # Cargar fondo desde archivo si se especifica
 fondo_imagen = None
