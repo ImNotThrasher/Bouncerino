@@ -40,6 +40,7 @@ echo.
 :: Compilación con PyInstaller
 :: --------------------------------------------------
 echo Compilando %APP_NAME%...
+echo.
 pyinstaller --onefile --windowed ^
     --add-data "%ICON_FILE%;." ^
     --add-data "%CONFIG_FILE%;." ^
