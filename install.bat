@@ -1,53 +1,82 @@
 @echo off
-setlocal EnableDelayedExpansion
+chcp 65001 >nul
+setlocal
 
-:: Nombre del screensaver (base para archivos)
+:: ---------------------------
+:: Instalador Bouncerino.scr
+:: ---------------------------
+
 set "NAME=Bouncerino"
+set "DEFAULT_DIR=%WINDIR%\System32"
+set "SRC_SCR=dist\%NAME%.scr"
+set "APPDATA_DIR=%APPDATA%\%NAME%"
 
-:: Detectar modo silent
-set SILENT=0
-if /I "%1"=="-silent" set SILENT=1
-if /I "%1"=="/silent" set SILENT=1
+:: 1) Preguntar carpeta (ENTER → DEFAULT_DIR)
+:: echo.
+:: set /P INSTALL_DIR="Ruta de instalacion para %NAME% (ENTER -> %DEFAULT_DIR%): "
+if "%INSTALL_DIR%"=="" set "INSTALL_DIR=%DEFAULT_DIR%"
 
-if !SILENT! EQU 0 (
-    color 0A
-    echo Instalando !NAME!...
-)
+echo.
+echo Instalando %NAME% ...
+echo.
 
-set "WINSYS=%WINDIR%\System32"
-set "APPDATA_DIR=%APPDATA%\!NAME!"
-set "SRC_FILE=dist\!NAME!.scr"
-set "DEST_FILE=%WINSYS%\!NAME!.scr"
-set "LOG_FILE=%APPDATA_DIR%\install_log.txt"
+:: Mostrar rutas destino
+:: echo .scr  → %INSTALL_DIR%\%NAME%.scr
+:: echo config.ini → %APPDATA_DIR%\config.ini
+:: echo image.png  → %APPDATA_DIR%\image.png
+:: echo.
 
-if not exist "!APPDATA_DIR!" (
-    mkdir "!APPDATA_DIR!"
-)
-
-if exist "!SRC_FILE!" (
-    copy /Y "!SRC_FILE!" "!DEST_FILE!" >nul
-    if !SILENT! EQU 0 echo ✅ Screensaver instalado en: !DEST_FILE!
-
-    if exist "src\config.ini" (
-        copy /Y "src\config.ini" "!APPDATA_DIR!\config.ini"
-    ) else (
-        if !SILENT! EQU 0 echo ⚠️ No se encontró src\config.ini
-        echo [%DATE% %TIME%] config.ini no encontrado >> "!LOG_FILE!"
-    )
-
-    if exist "src\image.png" (
-        copy /Y "src\image.png" "!APPDATA_DIR!\image.png"
-    ) else (
-        if !SILENT! EQU 0 echo ⚠️ No se encontró src\image.png
-        echo [%DATE% %TIME%] image.png no encontrado >> "!LOG_FILE!"
-    )
-
-    if !SILENT! EQU 0 echo Instalación completada.
+:: 2) Crear carpeta AppData
+if not exist "%APPDATA_DIR%" (
+    mkdir "%APPDATA_DIR%"
+    echo Carpeta creada: %APPDATA_DIR%
 ) else (
-    color 0C
-    echo ❌ No se pudo instalar: no se encontró !SRC_FILE!
-    echo [%DATE% %TIME%] ERROR: !NAME!.scr no encontrado >> "!LOG_FILE!"
+    echo Carpeta existente: %APPDATA_DIR%
 )
+echo.
 
-if !SILENT! EQU 0 pause
+:: 3) Instalar el .scr
+if not exist "%SRC_SCR%" (
+    echo ERROR: no se encontro %SRC_SCR%
+    pause
+    exit /b 1
+)
+if exist "%INSTALL_DIR%\%NAME%.scr" (
+    echo ⚠️ .scr ya existe en: %INSTALL_DIR%\%NAME%.scr
+) else (
+    copy "%SRC_SCR%" "%INSTALL_DIR%\%NAME%.scr" >nul
+    echo ✅ .scr copiado a: %INSTALL_DIR%\%NAME%.scr
+)
+echo.
+
+:: 4) Copiar config.ini
+if exist "src\config.ini" (
+    if exist "%APPDATA_DIR%\config.ini" (
+        echo ⚠️ config.ini ya existe en: %APPDATA_DIR%\config.ini
+    ) else (
+        copy "src\config.ini" "%APPDATA_DIR%\config.ini" >nul
+        echo ✅ config.ini copiado a: %APPDATA_DIR%\config.ini
+    )
+) else (
+    echo ⚠️ src\config.ini no encontrado, omitiendo.
+)
+echo.
+
+:: 5) Copiar image.png
+if exist "src\image.png" (
+    if exist "%APPDATA_DIR%\image.png" (
+        echo ⚠️ image.png ya existe en: %APPDATA_DIR%\image.png
+    ) else (
+        copy "src\image.png" "%APPDATA_DIR%\image.png" >nul
+        echo ✅ image.png copiado a: %APPDATA_DIR%\image.png
+    )
+) else (
+    echo ⚠️ src\image.png no encontrado, omitiendo.
+)
+echo.
+
+echo 🎉 Instalacion finalizada.
+echo.
+
+pause
 endlocal
