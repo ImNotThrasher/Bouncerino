@@ -78,7 +78,8 @@ VELOCIDAD_ROTACION = get_config("VELOCIDAD_CLONES_ROTACION", int)
 # Parse color
 try:
     COLOR_FONDO = tuple(int(c) for c in get_config("COLOR_FONDO").split(','))
-    assert len(COLOR_FONDO) == 3
+    if len(COLOR_FONDO) != 3:
+        raise ValueError("COLOR_FONDO debe tener exactamente tres componentes (R, G, B).")
 except Exception:
     logging.warning("COLOR_FONDO inválido. Usando negro.")
     COLOR_FONDO = (0,0,0)
