@@ -16,7 +16,7 @@ VALORES_POR_DEFECTO = {
     "MAX_ELEMENTOS": "100",
     "ARCHIVO_IMAGEN": "image.png",
     "TIEMPO_ESPERA": "10",
-    "ROTACION_CLONES_ACTIVADA": "True",
+    "ROTACION_CLONES": "True",
     "VELOCIDAD_CLONES_ROTACION": "3",
     "COLOR_FONDO": "0,0,0",
     "ARCHIVO_FONDO": ""
@@ -72,7 +72,7 @@ VELOCIDAD_REBOTE = get_config("VELOCIDAD_REBOTE", int)
 MAX_ELEMENTOS = get_config("MAX_ELEMENTOS", int)
 ARCHIVO_IMAGEN = get_config("ARCHIVO_IMAGEN")
 TIEMPO_ESPERA = get_config("TIEMPO_ESPERA", int)
-ROTACION_CLONES = get_config("ROTACION_CLONES_ACTIVADA").lower() in ("true","1","yes")
+ROTACION_CLONES = get_config("ROTACION_CLONES").lower() in ("true","1","yes")
 VELOCIDAD_ROTACION = get_config("VELOCIDAD_CLONES_ROTACION", int)
 
 # Parse color
@@ -94,7 +94,7 @@ MODO_VENTANA = "--ventana" in sys.argv
 # Create screen
 try:
     flags = 0 if MODO_VENTANA else pygame.FULLSCREEN
-    tamaño = (800,600) if MODO_VENTANA else pygame.display.Info().current_w, pygame.display.Info().current_h
+    tamaño = (800,600) if MODO_VENTANA else (pygame.display.Info().current_w, pygame.display.Info().current_h)
     pantalla = pygame.display.set_mode(tamaño, flags)
     pygame.display.set_caption(NOMBRE_SCREENSAVER)
     logging.info(f"Modo {'ventana' if MODO_VENTANA else 'pantalla completa'} activado a {tamaño}.")
@@ -147,8 +147,8 @@ vel_x = vel_y = VELOCIDAD_REBOTE
 
 # Create bouncing elements
 def crear_elemento(x,y):
-    tam = random.randint(50,150)
-    img = cargar_imagen(ARCHIVO_IMAGEN, tam)
+    element_size = random.randint(50,150)
+    img = cargar_imagen(ARCHIVO_IMAGEN, element_size)
     rect = img.get_rect(center=(x,y))
     vx = random.choice([-1,1])*random.randint(1,5)
     vy = random.choice([-1,1])*random.randint(1,5)
