@@ -12,8 +12,8 @@ set "SRC_SCR=dist\%NAME%.scr"
 set "APPDATA_DIR=%APPDATA%\%NAME%"
 
 :: 1) Preguntar carpeta (ENTER → DEFAULT_DIR)
-:: echo.
-:: set /P INSTALL_DIR="Ruta de instalacion para %NAME% (ENTER -> %DEFAULT_DIR%): "
+echo.
+set /P INSTALL_DIR="Ruta de instalacion para %NAME% (ENTER -> %DEFAULT_DIR%): "
 if "%INSTALL_DIR%"=="" set "INSTALL_DIR=%DEFAULT_DIR%"
 
 echo.
