@@ -12,8 +12,8 @@ set "DEFAULT_DIR=%WINDIR%\System32"
 set "APPDATA_DIR=%APPDATA%\%NAME%"
 
 :: 1) Preguntar ruta de instalación
-:: echo.
-:: set /P INSTALL_DIR="Ruta de instalación de %NAME% (ENTER -> %DEFAULT_DIR%): "
+echo.
+set /P INSTALL_DIR="Ruta de instalación de %NAME% (ENTER -> %DEFAULT_DIR%): "
 if "%INSTALL_DIR%"=="" set "INSTALL_DIR=%DEFAULT_DIR%"
 
 echo.

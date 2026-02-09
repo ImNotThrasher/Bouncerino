@@ -1,9 +1,10 @@
-import pygame
-import random
-import os
 import configparser
-import sys
 import logging
+import os
+import random
+import sys
+
+import pygame
 
 # Configure logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
@@ -100,7 +101,8 @@ try:
     logging.info(f"Modo {'ventana' if MODO_VENTANA else 'pantalla completa'} activado a {tamaño}.")
 except pygame.error as e:
     logging.error(f"Error al inicializar pantalla: {e}. Intentando modo ventana 800x600.")
-    pantalla = pygame.display.set_mode((800,600))
+    tamaño = (800, 600)
+    pantalla = pygame.display.set_mode(tamaño)
 
 # Load background surface optional
 fondo = None
@@ -110,6 +112,7 @@ if ARCHIVO_FONDO:
         try:
             fondo = pygame.image.load(ruta_fondo)
             fondo = fondo.convert()  # after display init
+            fondo = pygame.transform.scale(fondo, tamaño)  # scale to screen size
             logging.info(f"Fondo cargado: {ruta_fondo}")
         except Exception as e:
             logging.warning(f"No se pudo cargar fondo '{ruta_fondo}': {e}")
