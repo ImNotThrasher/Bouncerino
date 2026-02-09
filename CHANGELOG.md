@@ -4,6 +4,28 @@ Este archivo documenta los cambios realizados en cada versión de **bouncerino**
 
 ---
 
+## [v0.9.2] - 2026-02-09
+
+### 🐛 Correcciones
+
+#### Scripts de Instalación
+- **Fix #5**: Habilitado el prompt de selección de directorio personalizado en `install.bat` y `uninstall.bat`
+  - Anteriormente las líneas estaban comentadas y siempre se usaba el directorio predeterminado
+  - Ahora el usuario puede elegir dónde instalar o especificar ENTER para usar `%WINDIR%\System32`
+
+#### Renderizado de Fondo
+- **Fix**: Escalado automático de la imagen de fondo al tamaño de la pantalla
+  - La imagen de fondo ahora se escala correctamente usando `pygame.transform.scale()`
+  - Soporta tanto imágenes más pequeñas como más grandes que la resolución de pantalla
+  - Funciona correctamente en modo ventana y pantalla completa
+
+#### Manejo de Errores
+- **Fix**: Actualización correcta de la variable `tamaño` en el bloque de manejo de errores
+  - Cuando falla la inicialización de pantalla, la variable `tamaño` se actualiza antes de crear la pantalla de respaldo
+  - Garantiza que el fondo se escale correctamente incluso cuando hay un error de inicialización
+
+---
+
 ## [v0.9.1] - 2025-04-20
 
 ### 🔧 Instalación y Desinstalación
