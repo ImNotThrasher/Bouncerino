@@ -34,7 +34,7 @@ bouncerino/
 Este proyecto incluye un archivo [`requirements.txt`](./requirements.txt) que facilita la instalación de dependencias:
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 Requiere:
@@ -72,6 +72,7 @@ Esto aplica tanto a [`config.ini`](src/config.ini), [`image.png`](src/image.png)
 NOMBRE_SCREENSAVER = Bouncerino
 COLOR_FONDO = 0, 0, 0
 ARCHIVO_FONDO =
+MODO_FONDO = expandir
 
 ; -------------------
 ; Imagen principal
@@ -93,6 +94,17 @@ VELOCIDAD_CLONES_ROTACION = 3
 TIEMPO_ESPERA = 10
 ```
 
+### Modos de fondo
+
+Si `ARCHIVO_FONDO` apunta a una imagen válida, `MODO_FONDO` define cómo se dibuja:
+
+- `expandir`: estira una sola imagen para cubrir toda el área disponible.
+- `ajustar`: mantiene proporción y recorta lo necesario para cubrir.
+- `repetir`: repite la imagen como mosaico.
+- `duplicar`: dibuja la misma imagen, ajustada y recortada, en cada monitor.
+
+Para setups con varias pantallas, `duplicar` suele dar el resultado más natural.
+
 ---
 
 ## ▶️ Ejecución
@@ -110,6 +122,8 @@ python src/bouncerino.py --ventana
 ```bash
 python src/bouncerino.py
 ```
+
+En Windows, el modo normal intenta cubrir el escritorio virtual completo, incluyendo varias pantallas. Si no puede detectar el área virtual, vuelve al modo fullscreen tradicional.
 
 ### 🖱️ O usar el script `run.bat`
 
@@ -177,6 +191,10 @@ Elimina el `.scr` de System32 y los recursos de `%APPDATA%\Bouncerino`.
 - Si no se encuentran los archivos de imagen/config:
   - Usa valores por defecto
   - Muestra una imagen roja de reemplazo
+
+- En Windows con varias pantallas:
+  - Cubre el área virtual completa del escritorio
+  - Permite duplicar, ajustar, expandir o repetir el fondo configurado
 
 ---
 
